@@ -73,7 +73,7 @@ if (emptyRule(str)) {
 
 ## Return Values
 
-In order to always simply return true or false when evaluate a condition, the given-when-then can be exchanged for a given-return specification:
+In order to always simply return `true` or `false` when evaluating a condition, the given-when-then can be exchanged for a given-return specification:
 
 ```kotlin
 val emptyRule = rule("Empty string") {
@@ -226,4 +226,81 @@ val helloRule = rule("Path is hello") {
 
 println(helloRule(helloRequest))   // Prints "Hello"
 println(helloRule(userRequest))    // Prints "Good bye"
+```
+
+## Rule Sets
+
+You can use the framework to build a list of rules, called a rule set. There's nothing particularly fancy about this, as the framework does not implement complex functionality on top of rule sets. You can use them however you choose.
+
+To implement a set of rules, use the `rules` helper which is an alias for `arrayOf`. Here's a more complex example:
+
+```kotlin
+fun GivenExpression.anyRequest() = any(Request::class)
+
+fun requestFor(path: String, queryString: String? = null): Request {
+  return Request(
+    "Cookies: sid=abc123\nSM_USER=johndoe",
+    "https://www.ecommerce.biz",
+    path,
+    queryString
+  )
+}
+
+val ruleSet = rules(
+  rule("request is login") {
+    given {
+      anyRequest()
+    } and { request ->
+      request.requestPath.contains("/login")
+    } thenDo { request ->
+      println("Hello, ${request.requestPath}")
+    }
+  },
+  rule("request is send order") {
+    given {
+      anyRequest()
+    } alwaysReturn { request ->
+      request.requestPath.endsWith("/orders")
+    }
+  },
+  rule("request is logout") {
+    given {
+      anyRequest()
+    } alwaysReturn { request ->
+      request.requestPath.contains("/logout")
+    }
+  },
+  rule("request is search") {
+    given {
+      anyRequest()
+    } whose {
+      requestPath.contains("/search")
+    } thenDo {
+      println("printing a message in thenDo")
+    }
+  }
+)
+
+val requests = listOf(
+  requestFor("/api/v1/login"),
+  requestFor("/api/v1/user"),
+  requestFor("/api/v1/messages"),
+  requestFor("/api/v1/dashboard"),
+  requestFor("/api/v1/search", "category=Kitchen&q=Kitchen%20Aid%20Mixer"),
+  requestFor("/api/v1/orders"),
+  requestFor("/api/v1/orders/123"),
+  requestFor("/api/v1/logout")
+)
+
+
+for (i in requests.indices) {
+  val request = requests[i]
+  println("Processing event ${i + 1} with request path ${request.requestPath}")
+
+  for (rule in ruleSet) {
+    if (rule(request)) {
+      println("+Rule \"${rule.description}\" matched")
+    }
+  }
+}
 ```

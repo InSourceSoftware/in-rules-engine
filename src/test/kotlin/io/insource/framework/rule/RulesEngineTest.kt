@@ -119,7 +119,7 @@ class RulesEngineTest {
     }
   }
 
-  fun GivenExpression.anyRequest() = any(Request::class)
+  private fun GivenExpression.anyRequest() = any(Request::class)
 
   companion object {
     private fun eventFor(path: String, queryString: String? = null): Map<String, String?> {
