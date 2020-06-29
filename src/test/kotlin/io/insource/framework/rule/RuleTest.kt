@@ -1,7 +1,7 @@
 package io.insource.framework.rule
 
+import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
 
