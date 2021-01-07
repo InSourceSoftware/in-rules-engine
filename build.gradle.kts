@@ -29,6 +29,14 @@ publishing {
         password = project.findProperty("servers.github.password")?.toString() ?: System.getenv("GITHUB_PASSWORD")
       }
     }
+    maven {
+      name = "ossrh"
+      url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+      credentials {
+        username = project.findProperty("servers.ossrh.username")?.toString() ?: System.getenv("OSSRH_USERNAME")
+        password = project.findProperty("servers.ossrh.password")?.toString() ?: System.getenv("OSSRH_PASSWORD")
+      }
+    }
   }
 
   publications {
@@ -65,6 +73,10 @@ publishing {
       }
     }
   }
+}
+
+signing {
+  sign(publishing.publications["maven"])
 }
 
 repositories {
