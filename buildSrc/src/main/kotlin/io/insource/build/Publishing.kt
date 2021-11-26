@@ -3,7 +3,7 @@ package io.insource.build
 object Publishing {
   val groupId = "io.insource"
   val artifactId = "in-rules-engine"
-  val version = "0.0.4"
+  val version = "0.1.0"
   val description = "Kotlin rules engine DSL for maintaining rules and business logic in code."
   val url = "https://github.com/InSourceSoftware/in-rules-engine"
   val license = "Mozilla Public License Version 2.0"
